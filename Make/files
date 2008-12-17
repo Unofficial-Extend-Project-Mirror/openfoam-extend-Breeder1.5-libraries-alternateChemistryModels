@@ -1,0 +1,5 @@
+OpenFOAM/chemistryModelProxy.C
+OpenFOAM/localTimeChemistryModelProxy.C
+alternateChemistryModel.C
+
+LIB = $(FOAM_USER_LIBBIN)/libalternateChemistryModels
