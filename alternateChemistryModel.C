@@ -130,6 +130,28 @@ autoPtr<alternateChemistryModel> alternateChemistryModel::New
 
 tmp<volScalarField> alternateChemistryModel::characteristicTime()
 {
+    autoPtr<volVectorField> Utmp;
+    if(!rho_.mesh().foundObject<volVectorField>("U")) {
+        WarningIn("alternateChemistryModel::characteristicTime()")
+            << "No velocity field found .... force reading" << endl;
+
+        Utmp.reset(
+            new volVectorField 
+            (
+                IOobject
+                (
+                    "U",
+                    rho_.mesh().time().timeName(),
+                    rho_.mesh(),
+                    IOobject::MUST_READ,
+                    IOobject::NO_WRITE
+                ),
+                rho_.mesh()
+            )
+        );
+
+    }
+
     const volVectorField &U=rho_.mesh().lookupObject<volVectorField>("U");
     
     volScalarField charLen
