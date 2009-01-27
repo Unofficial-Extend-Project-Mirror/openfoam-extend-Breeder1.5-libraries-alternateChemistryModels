@@ -141,6 +141,9 @@ public:
         //- The chemical time scale
         virtual tmp<volScalarField> tc() const=0;
 
+	//- The local flow time scale
+	tmp<volScalarField> tf();
+
         //- Return the chemical source terms
         virtual tmp<volScalarField> RR(const label i) const=0;
 

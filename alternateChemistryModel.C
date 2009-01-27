@@ -106,6 +106,7 @@ autoPtr<alternateChemistryModel> alternateChemistryModel::New
                     << steadyChemistryConstructorTablePtr_->toc()
                     << exit(FatalError);
         }
+	Info<< "with STEADY chemistry model" << endl;
 
         return autoPtr<alternateChemistryModel>(cstrIter()(thermo,rho));
     } else {
@@ -123,6 +124,7 @@ autoPtr<alternateChemistryModel> alternateChemistryModel::New
                     << transientChemistryConstructorTablePtr_->toc()
                     << exit(FatalError);
         }
+	Info<< "with UNSTEADY chemistry model" << endl;
 
         return autoPtr<alternateChemistryModel>(cstrIter()(thermo,rho));
     }
@@ -226,6 +228,33 @@ tmp<volScalarField> alternateChemistryModel::characteristicTime()
 
     return charTime;
 }
+
+tmp<volScalarField> alternateChemistryModel::tf()
+{
+	const scalarField localTime=characteristicTime()().internalField();
+
+	tmp<volScalarField> tsource(
+	    new volScalarField(
+		 IOobject
+		 (
+		      "tf",
+                      rho_.time().timeName(),
+		      rho_.db(),
+		      IOobject::NO_READ,
+		      IOobject::NO_WRITE
+		 ),
+		 rho_.mesh(),
+		 dimensionedScalar("zero", dimensionSet(0, 0, 1, 0, 0), 0.0),
+		 zeroGradientFvPatchScalarField::typeName
+		 )
+	    );
+
+	tsource().internalField() = localTime;
+	tsource().correctBoundaryConditions();
+
+	return tsource;
+}
+
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
